@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Malayalam Typing Keyboard</title>
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh; font-family:Arial,"Noto Sans Malayalam",sans-serif;
+    background:linear-gradient(135deg,#0b1020,#111827 55%,#0f172a);
+    color:#fff; display:flex; justify-content:center; padding:24px;
+  }
+  .app{width:min(1100px,100%)}
+  h1{margin:0 0 6px;text-align:center;font-size:clamp(25px,4vw,42px)}
+  .sub{text-align:center;color:#aab4c5;margin-bottom:22px}
+  .card{
+    background:rgba(17,24,39,.88); border:1px solid #263247;
+    border-radius:20px; padding:18px; box-shadow:0 20px 60px rgba(0,0,0,.35);
+  }
+  textarea{
+    width:100%; min-height:190px; resize:vertical; border:1px solid #334155;
+    border-radius:14px; background:#070b14; color:#fff; padding:18px;
+    font-size:24px; line-height:1.65; outline:none;
+  }
+  textarea:focus{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(96,165,250,.12)}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 18px}
+  button{
+    border:1px solid #334155; background:#1e293b;color:#fff;border-radius:10px;
+    padding:9px 14px;cursor:pointer;font-weight:600
+  }
+  button:hover{background:#334155}
+  .status{margin-left:auto;color:#94a3b8;font-size:14px;align-self:center}
+  .keyboard{display:grid;gap:7px;user-select:none}
+  .row{display:flex;gap:7px;justify-content:center}
+  .key{
+    min-width:54px;height:55px;padding:5px 7px;border-radius:9px;
+    background:linear-gradient(#263449,#1b2536);border:1px solid #3b4a61;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    cursor:pointer;transition:.08s;position:relative;
+  }
+  .key:hover{background:#34445d;transform:translateY(-1px)}
+  .key:active,.key.active{transform:translateY(1px);background:#475b79}
+  .key .ml{font-size:21px;line-height:1.1}
+  .key .en{font-size:11px;color:#9fb0c7;margin-top:3px}
+  .wide{min-width:95px}.space{min-width:300px}.enter{min-width:105px}
+  .shift{min-width:115px}.back{min-width:90px}
+  .hint{margin-top:14px;color:#94a3b8;font-size:13px;text-align:center}
+  .mode{
+    display:inline-flex;align-items:center;gap:8px;background:#0b1220;border:1px solid #334155;
+    border-radius:999px;padding:6px 10px;font-size:13px
+  }
+  .dot{width:9px;height:9px;border-radius:50%;background:#22c55e}
+  @media(max-width:700px){
+    body{padding:10px}.card{padding:10px}.key{min-width:38px;height:48px}.key .ml{font-size:17px}
+    .key .en{font-size:9px}.space{min-width:130px}.wide,.enter,.shift,.back{min-width:65px}
+    textarea{font-size:20px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>മലയാളം Typing Keyboard</h1>
+  <div class="sub">Ubuntu / Malayalam InScript-style keyboard • Physical keyboard + on-screen keyboard</div>
+
+  <div class="card">
+    <div class="mode"><span class="dot"></span><span id="modeText">Malayalam mode ON</span></div>
+
+    <textarea id="editor" spellcheck="false" placeholder="ഇവിടെ മലയാളം ടൈപ്പ് ചെയ്യുക..."></textarea>
+
+    <div class="toolbar">
+      <button id="toggle">🌐 English / മലയാളം</button>
+      <button id="copy">📋 Copy</button>
+      <button id="clear">✕ Clear</button>
+      <button id="backspace">⌫ Backspace</button>
+      <span class="status" id="count">0 characters</span>
+    </div>
+
+    <div class="keyboard" id="keyboard"></div>
+    <div class="hint">Tip: click the keyboard or use your real keyboard. Hold Shift for the red/shift characters.</div>
+  </div>
+</div>
+
+<script>
+const editor = document.getElementById("editor");
+const keyboard = document.getElementById("keyboard");
+const modeText = document.getElementById("modeText");
+const count = document.getElementById("count");
+let malayalam = true;
+let shiftDown = false;
+
+/*
+  Mapping follows the Malayalam InScript-style layout shown in the
+  supplied reference image. Unicode combining marks are inserted directly,
+  so conjuncts such as ക + ് + ഷ render naturally.
+*/
+const normal = {
+  // Vowels / signs
+  "q":"ൗ","w":"ൈ","e":"ാ","r":"ീ","t":"ൂ",
+  "a":"ോ","s":"േ","d":"്","f":"ി","g":"ു",
+  "z":"െ","x":"ം",
+
+  // Consonants
+  "y":"ബ","u":"ഹ","i":"ഗ","o":"ദ","p":"ജ","[":"ഡ","]":"",
+  "h":"പ","j":"ര","k":"ക","l":"ത",";":"ച","'":"ട",
+  "c":"മ","v":"ന","b":"വ","n":"ല","m":"സ",
+  ",":",",".":".","/":"യ"
+};
+
+const shifted = {
+  "q":"ഔ","w":"ഐ","e":"ആ","r":"ഈ","t":"ഊ",
+  "y":"ഭ","u":"ങ","i":"ഘ","o":"ധ","p":"ഝ","[":"ഢ","]":"ഞ",
+  "a":"ഓ","s":"ഏ","d":"അ","f":"ഇ","g":"ഉ",
+  "h":"ഫ","j":"റ","k":"ഖ","l":"ഥ",";":"ഛ","'":"ഠ",
+  "z":"എ","x":"അം","c":"ണ","v":"ൻ","b":"ഴ","n":"ള","m":"ശ",
+  ",":"ഷ",".":"", "/":""
+};
+
+// Extra direct combinations visible in the reference chart.
+const special = {
+  "Shift+v":"ൻ",
+  "Shift+x":"ൺ",
+  "Shift+i":"ർ",
+  "Shift+>":"ൽ",
+  "Shift+*":"ൾ",
+  "Shift+|":"ർ",
+  "Shift+\\":"ൽ"
+};
+
+// Visual rows. Each item: [physical key, normal label, shifted label]
+const rows = [
+  [
+    ["`","ൊ",""],["1","൧",""],["2","൨",""],["3","൩",""],["4","൪",""],
+    ["5","൫",""],["6","൬",""],["7","൭",""],["8","൮",""],["9","൯",""],
+    ["0","൦",""],["-","-",""],["=","ൃ",""]
+  ],
+  [
+    ["q","ൗ","ഔ"],["w","ൈ","ഐ"],["e","ാ","ആ"],["r","ീ","ഈ"],["t","ൂ","ഊ"],
+    ["y","ബ","ഭ"],["u","ഹ","ങ"],["i","ഗ","ഘ"],["o","ദ","ധ"],["p","ജ","ഝ"],
+    ["[","ഡ","ഢ"],["]","","ഞ"],["\\","",""]
+  ],
+  [
+    ["a","ോ","ഓ"],["s","േ","ഏ"],["d","്","അ"],["f","ി","ഇ"],["g","ു","ഉ"],
+    ["h","പ","ഫ"],["j","ര","റ"],["k","ക","ഖ"],["l","ത","ഥ"],[";","ച","ഛ"],
+    ["'","ട","ഠ"]
+  ],
+  [
+    ["z","െ","എ"],["x","ം","അം"],["c","മ","ണ"],["v","ന","ൻ"],["b","വ","ഴ"],
+    ["n","ല","ള"],["m","സ","ശ"],[",",",","ഷ"],[".",".",""],["/","യ",""]
+  ],
+  [
+    ["SHIFT","Shift","Shift"],["SPACE","Space",""],["BACK","Backspace",""],["ENTER","Enter",""]
+  ]
+];
+
+function insertText(text){
+  if(!text) return;
+  const start=editor.selectionStart, end=editor.selectionEnd;
+  editor.setRangeText(text,start,end,"end");
+  editor.focus();
+  updateCount();
+}
+
+function getOutput(key, shift=false){
+  if(key===" ") return " ";
+  if(key==="\\") return shift ? "ൽ" : "";
+  if(key===">" && shift) return "ൽ";
+  if(key==="*" && shift) return "ൾ";
+  if(key==="|") return "ർ";
+
+  const k=key.toLowerCase();
+  if(shift && special["Shift+"+k]) return special["Shift+"+k];
+  if(shift && shifted[k]!==undefined) return shifted[k];
+  if(!shift && normal[k]!==undefined) return normal[k];
+  return malayalam ? key : key;
+}
+
+function typeKey(key, forceShift=false){
+  if(key==="SHIFT"){ shiftDown=!shiftDown; renderKeyboard(); return; }
+  if(key==="SPACE"){ insertText(" "); return; }
+  if(key==="BACK"){ 
+    const s=editor.selectionStart,e=editor.selectionEnd;
+    if(s!==e) editor.setRangeText("",s,e,"end");
+    else if(s>0) editor.setRangeText("",s-1,s,"end");
+    editor.focus(); updateCount(); return;
+  }
+  if(key==="ENTER"){ insertText("\\n"); return; }
+
+  if(!malayalam){ insertText(key); return; }
+  const out=getOutput(key,forceShift || shiftDown);
+  insertText(out);
+  if(shiftDown){shiftDown=false;renderKeyboard();}
+}
+
+function makeKey(key, ml, sh){
+  const b=document.createElement("button");
+  b.type="button"; b.className="key";
+  if(key==="SPACE") b.classList.add("space");
+  if(key==="SHIFT") b.classList.add("shift");
+  if(key==="BACK") b.classList.add("back");
+  if(key==="ENTER") b.classList.add("enter");
+  const mlEl=document.createElement("span"); mlEl.className="ml";
+  const enEl=document.createElement("span"); enEl.className="en";
+  mlEl.textContent=(key==="SHIFT" ? (shiftDown?"⇧":"Shift") :
+                    key==="SPACE"?"␠" : key==="BACK"?"⌫" : key==="ENTER"?"↵" :
+                    (shiftDown && sh ? sh : ml));
+  enEl.textContent=key==="SPACE"?"Space":key==="SHIFT"?"Shift":key==="BACK"?"Back":key==="ENTER"?"Enter":key;
+  b.append(mlEl,enEl);
+  b.addEventListener("click",()=>typeKey(key));
+  return b;
+}
+
+function renderKeyboard(){
+  keyboard.innerHTML="";
+  rows.forEach(row=>{
+    const r=document.createElement("div"); r.className="row";
+    row.forEach(x=>r.appendChild(makeKey(x[0],x[1],x[2])));
+    keyboard.appendChild(r);
+  });
+}
+
+function updateCount(){
+  count.textContent=editor.value.length+" characters";
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.ctrlKey||e.altKey||e.metaKey) return;
+  if(e.key==="Shift"){shiftDown=true;renderKeyboard();return;}
+  if(!malayalam) return;
+
+  if(e.key==="Backspace"||e.key==="Enter"||e.key===" "){
+    e.preventDefault();
+    typeKey(e.key==="Backspace"?"BACK":e.key==="Enter"?"ENTER":"SPACE");
+    return;
+  }
+  if(e.key.length===1){
+    const out=getOutput(e.key,e.shiftKey);
+    if(normal[e.key.toLowerCase()]!==undefined || shifted[e.key.toLowerCase()]!==undefined ||
+       "qwertyuiop[]asdfghjkl;'zxcvbnm,./".includes(e.key.toLowerCase())){
+      e.preventDefault();
+      insertText(out);
+    }
+  }
+});
+document.addEventListener("keyup",e=>{
+  if(e.key==="Shift"){shiftDown=false;renderKeyboard();}
+});
+
+document.getElementById("toggle").onclick=()=>{
+  malayalam=!malayalam;
+  modeText.textContent=malayalam?"Malayalam mode ON":"English mode ON";
+};
+document.getElementById("copy").onclick=async()=>{
+  await navigator.clipboard.writeText(editor.value);
+  const old=count.textContent; count.textContent="Copied ✓";
+  setTimeout(()=>count.textContent=old,900);
+};
+document.getElementById("clear").onclick=()=>{editor.value="";editor.focus();updateCount();};
+document.getElementById("backspace").onclick=()=>typeKey("BACK");
+editor.addEventListener("input",updateCount);
+
+renderKeyboard();
+updateCount();
+editor.focus();
+</script>
+</body>
+</html>
