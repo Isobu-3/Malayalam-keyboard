@@ -1,205 +1,182 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Malayalam Typing Keyboard — Ubuntu 22.04</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Malayalam Enhanced InScript Keyboard</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#0b1020;color:#fff;font-family:Arial,"Noto Sans Malayalam","Noto Sans",sans-serif;padding:18px}
-.app{max-width:1250px;margin:auto}
-h1{text-align:center;margin:5px 0;font-size:clamp(25px,4vw,42px)}
-.subtitle{text-align:center;color:#aab6ca;margin:0 0 18px}
-.card{background:#111827;border:1px solid #29364b;border-radius:18px;padding:16px;box-shadow:0 18px 50px #0007}
-textarea{width:100%;min-height:190px;background:#070b13;color:#fff;border:1px solid #34435a;border-radius:12px;padding:16px;font-size:25px;line-height:1.65;outline:none}
-textarea:focus{border-color:#60a5fa}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+body{margin:0;background:#0d1117;color:#e6edf3;font-family:Arial,"Noto Sans Malayalam",sans-serif}
+.wrap{max-width:1200px;margin:auto;padding:20px}
+h1{text-align:center;margin:0;font-family:Georgia,serif;font-size:34px}
+.sub{text-align:center;color:#9da7b3;margin:5px 0 18px}
+.panel{background:#161b22;border:1px solid #30363d;border-radius:14px;padding:16px}
+textarea{width:100%;height:180px;background:#0d1117;color:#fff;border:1px solid #30363d;border-radius:10px;padding:15px;font:24px/1.7 "Noto Sans Malayalam",Arial,sans-serif;resize:vertical;outline:none}
+textarea:focus{border-color:#58a6ff}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 15px}
 button{font:inherit}
-.action{border:1px solid #3a4960;background:#1d293b;color:#fff;padding:9px 13px;border-radius:9px;cursor:pointer}
-.action:hover{background:#33445d}
-.status{margin-left:auto;color:#94a3b8;font-size:13px}
-.keyboard{display:grid;gap:7px}
-.krow{display:flex;gap:6px;justify-content:center}
-.key{height:58px;min-width:58px;border:1px solid #3b4a61;border-radius:9px;background:linear-gradient(#29374c,#1b2638);color:#fff;cursor:pointer;padding:5px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.key:hover{background:#3a4b65}
+.action{background:#21262d;color:#e6edf3;border:1px solid #30363d;border-radius:7px;padding:8px 12px;cursor:pointer}
+.action:hover{background:#30363d}
+.status{margin-left:auto;color:#8b949e;font-size:13px}
+.keyboard{overflow-x:auto}
+.row{display:flex;gap:5px;min-width:1030px;justify-content:center;margin-bottom:5px}
+.key{width:68px;height:62px;background:#21262d;border:1px solid #444c56;border-radius:6px;color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.key:hover{background:#30363d}
 .key:active{transform:translateY(1px)}
-.key .main{font-size:21px;line-height:1.05}
-.key .latin{font-size:10px;color:#9eacc0;margin-top:4px}
-.key.wide{min-width:90px}.key.shift{min-width:105px}.key.space{min-width:300px}.key.enter{min-width:95px}.key.back{min-width:90px}
-.key.shifted .main{font-size:20px}
-.section-title{margin:22px 0 9px;font-size:18px;color:#dbe6f5}
-.combo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
-.combo{min-height:64px;border:1px solid #3b4a61;border-radius:9px;background:#182335;color:#fff;cursor:pointer;padding:7px}
-.combo .result{font-size:23px;display:block}.combo .keys{font-size:11px;color:#aab6ca;display:block;margin-top:4px}
-.note{text-align:center;color:#8fa0b7;font-size:13px;margin-top:13px}
-@media(max-width:850px){
- .key{min-width:40px;height:50px}.key .main{font-size:17px}.key .latin{font-size:8px}
- .key.wide,.key.enter,.key.back{min-width:65px}.key.shift{min-width:75px}.key.space{min-width:150px}
- .combo-grid{grid-template-columns:repeat(2,1fr)}
- textarea{font-size:21px}
-}
+.key .ml{font-size:23px;line-height:1}
+.key .shiftlabel{font-size:13px;color:#f85149;margin-top:5px;font-weight:bold}
+.key .latin{font-size:10px;color:#8b949e;margin-top:4px}
+.key.wide{width:105px}.key.space{width:350px}.key.enter{width:100px}
+.key.active{outline:2px solid #58a6ff;background:#30363d}
+.special-title{margin:20px 0 8px;font-weight:bold}
+.specials{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.special{background:#21262d;border:1px solid #30363d;border-radius:7px;padding:8px;color:white;cursor:pointer;text-align:center}
+.special strong{display:block;font-size:23px}
+.special span{display:block;color:#f85149;font-size:11px;margin-top:5px}
+@media(max-width:700px){.wrap{padding:8px}h1{font-size:27px}.panel{padding:9px}.specials{grid-template-columns:repeat(2,1fr)}textarea{height:140px;font-size:20px}}
 </style>
 </head>
 <body>
-<div class="app">
-<h1>മലയാളം Typing Keyboard</h1>
-<p class="subtitle">Malayalam Unicode • Ubuntu 22.04 / InScript layout</p>
-
-<div class="card">
+<div class="wrap">
+<h1>മലയാളം TYPING — UBUNTU 22.04</h1>
+<div class="sub">Malayalam Enhanced InScript • Complete Unicode keyboard</div>
+<div class="panel">
 <textarea id="editor" spellcheck="false" placeholder="ഇവിടെ മലയാളം ടൈപ്പ് ചെയ്യുക..."></textarea>
-
 <div class="toolbar">
-<button class="action" id="mode">🌐 Malayalam ON</button>
 <button class="action" id="copy">📋 Copy</button>
-<button class="action" id="clear">✕ Clear</button>
-<button class="action" id="undo">↶ Undo</button>
-<button class="action" id="redo">↷ Redo</button>
-<span class="status" id="status">0 characters</span>
+<button class="action" id="clear">Clear</button>
+<button class="action" id="undo">Undo</button>
+<button class="action" id="redo">Redo</button>
+<button class="action" id="mode">മലയാളം / English</button>
+<span class="status" id="status">Malayalam • 0 characters</span>
 </div>
-
 <div id="keyboard" class="keyboard"></div>
-
-<div class="section-title">Special Malayalam combinations from the reference chart</div>
-<div id="combos" class="combo-grid"></div>
-<p class="note">Click a key or use your physical keyboard. Shift gives the red character. The mapping is Unicode InScript, so Malayalam letters and conjuncts can be typed correctly.</p>
+<div class="special-title">Special combinations / chillus / conjuncts</div>
+<div id="specials" class="specials"></div>
 </div>
 </div>
 
 <script>
 const editor=document.getElementById("editor");
-let mlMode=true, shiftHeld=false;
+let mlMode=true;
 
-const normal={
-"q":"ൌ","w":"ൈ","e":"ാ","r":"ീ","t":"ൂ",
-"y":"ബ","u":"ഹ","i":"ഗ","o":"ദ","p":"ജ","[":"ഡ","]":"഼",
-"a":"ോ","s":"േ","d":"്","f":"ി","g":"ു",
-"h":"പ","j":"ര","k":"ക","l":"ത",";":"ച","'":"ട",
-"z":"െ","x":"ം","c":"മ","v":"ന","b":"വ","n":"ല","m":"സ",
-",":",",".":".","/":"യ","\\":"അ",
-"`":"`","-":"-","=":"="
+/* Exact two-level mapping from the Linux xkeyboard-config
+   Malayalam "mal_enhanced" layout. */
+const K={
+"`":["ഒ","ഓ"],"1":["൧","!"],"2":["൨","@"],"3":["൩","#"],"4":["൪","$"],
+"5":["൫","%"],"6":["൬","^"],"7":["൭","&"],"8":["൮","~"],"9":["൯","("],
+"0":["൦",")"],"-":["-","ഃ"],"=":["ൃ","ഋ"],
+
+"q":["ൌ","ഔ"],"w":["ൈ","ഐ"],"e":["ാ","ആ"],"r":["ീ","ഈ"],"t":["ൂ","ഊ"],
+"y":["ബ","ഭ"],"u":["ഹ","ങ"],"i":["ഗ","ഘ"],"o":["ദ","ധ"],"p":["ജ","ഝ"],
+"[":["ഡ","ഢ"],"]":["‍","ഞ"],"\\":["\u200c","\\ "],
+
+"a":["ോ","ഓ"],"s":["േ","ഏ"],"d":["്","അ"],"f":["ി","ഇ"],"g":["ു","ഉ"],
+"h":["പ","ഫ"],"j":["ര","റ"],"k":["ക","ഖ"],"l":["ത","ഥ"],";":["ച","ഛ"],
+"'":["ട","ഠ"],
+
+"z":["െ","എ"],"x":["ം","ൺ"],"c":["മ","ണ"],"v":["ന","ൻ"],"b":["വ","ഴ"],
+"n":["ല","ള"],"m":["സ","ശ"],",":[",","ഷ"],".":[".","ൽ"],"/":["യ","?"]
 };
 
-const shifted={
-"q":"ഔ","w":"ഐ","e":"ആ","r":"ഈ","t":"ഊ",
-"y":"ഭ","u":"ങ","i":"ഘ","o":"ധ","p":"ഝ","[":"ഢ","]":"ഞ",
-"a":"ഓ","s":"ഏ","d":"അ","f":"ഇ","g":"ഉ",
-"h":"ഫ","j":"റ","k":"ഖ","l":"ഥ",";":"ഛ","'":"ഠ",
-"z":"ഒ","x":"ഁ","c":"ണ","v":"ന","b":"ള","n":"ശ","m":"ഷ",
-",":"।",".":"യ","/":"യ","\\":"അ",
-"`":"~","-":"_","=":"+"
-};
-
+// Visual key rows from the supplied chart.
 const rows=[
-[
-["`","`","~"],["1","1","!"],["2","2","@"],["3","3","#"],["4","4","$"],["5","5","%"],
-["6","6","^"],["7","7","&"],["8","8","*"],["9","9","("],["0","0",")"],["-","-","_"],["=","=","+"]
-],
-[
-["q","ൌ","ഔ"],["w","ൈ","ഐ"],["e","ാ","ആ"],["r","ീ","ഈ"],["t","ൂ","ഊ"],
-["y","ബ","ഭ"],["u","ഹ","ങ"],["i","ഗ","ഘ"],["o","ദ","ധ"],["p","ജ","ഝ"],
-["[","ഡ","ഢ"],["]","഼","ഞ"],["\\","അ","അ"]
-],
-[
-["a","ോ","ഓ"],["s","േ","ഏ"],["d","്","അ"],["f","ി","ഇ"],["g","ു","ഉ"],
-["h","പ","ഫ"],["j","ര","റ"],["k","ക","ഖ"],["l","ത","ഥ"],[";","ച","ഛ"],["'","ട","ഠ"]
-],
-[
-["z","െ","ഒ"],["x","ം","ഁ"],["c","മ","ണ"],["v","ന","ന"],["b","വ","ള"],
-["n","ല","ശ"],["m","സ","ഷ"],[",",",","।"],[".",".","യ"],["/","യ","യ"]
-]
+["`","1","2","3","4","5","6","7","8","9","0","-","="],
+["q","w","e","r","t","y","u","i","o","p","[","]","\\"],
+["a","s","d","f","g","h","j","k","l",";","'"],
+["z","x","c","v","b","n","m",",",".","/"]
 ];
 
-function insertText(text){
- const s=editor.selectionStart,e=editor.selectionEnd;
- editor.setRangeText(text,s,e,"end"); editor.focus(); update();
+function label(k,shift){
+ let v=K[k] ? K[k][shift?1:0] : k;
+ if(k==="\\") v=shift?"\\":"‌";
+ return v;
+}
+function insertText(s){
+ if(!s)return;
+ const a=editor.selectionStart,b=editor.selectionEnd;
+ editor.setRangeText(s,a,b,"end");editor.focus();update();
+}
+function typeKey(k,shift=false){
+ if(k==="SPACE"){insertText(" ");return}
+ if(k==="ENTER"){insertText("\n");return}
+ if(k==="BACK"){backspace();return}
+ insertText(label(k,shift));
 }
 function backspace(){
- const s=editor.selectionStart,e=editor.selectionEnd;
- if(s!==e) editor.setRangeText("",s,e,"end");
- else if(s>0) editor.setRangeText("",s-1,s,"end");
+ const a=editor.selectionStart,b=editor.selectionEnd;
+ if(a!==b)editor.setRangeText("",a,b,"end");
+ else if(a>0)editor.setRangeText("",a-1,a,"end");
  editor.focus();update();
 }
-function output(key,shift){
- if(key===" ")return " ";
- if(!mlMode)return key;
- const k=key.toLowerCase();
- return shift ? (shifted[k]??key) : (normal[k]??key);
-}
-function press(key,forceShift=false){
- if(key==="SHIFT"){shiftHeld=!shiftHeld;render();return}
- if(key==="SPACE"){insertText(" ");return}
- if(key==="ENTER"){insertText("\n");return}
- if(key==="BACK"){backspace();return}
- insertText(output(key,forceShift||shiftHeld));
- if(shiftHeld){shiftHeld=false;render()}
-}
-function keyButton(key,normalLabel,shiftLabel){
- const b=document.createElement("button"); b.type="button";b.className="key";
- const main=document.createElement("span");main.className="main";
- const latin=document.createElement("span");latin.className="latin";
- main.textContent=shiftHeld&&shiftLabel?shiftLabel:normalLabel;
- latin.textContent=key;
- b.append(main,latin);
- b.onclick=()=>press(key);
+function makeKey(k){
+ const b=document.createElement("button");b.className="key";b.type="button";
+ const v=K[k]||[k,k];
+ b.innerHTML=`<span class="ml">${v[0]}</span><span class="shiftlabel">${v[1]}</span><span class="latin">${k}</span>`;
+ b.onclick=()=>typeKey(k,false);
+ b.oncontextmenu=e=>{e.preventDefault();typeKey(k,true)};
  return b;
 }
 function render(){
  const kb=document.getElementById("keyboard");kb.innerHTML="";
- rows.forEach(row=>{
-  const r=document.createElement("div");r.className="krow";
-  row.forEach(x=>r.appendChild(keyButton(x[0],x[1],x[2])));
+ rows.forEach(keys=>{
+  const r=document.createElement("div");r.className="row";
+  keys.forEach(k=>r.appendChild(makeKey(k)));
   kb.appendChild(r);
  });
- const r=document.createElement("div");r.className="krow";
- let b=document.createElement("button");b.className="key shift wide";b.innerHTML='<span class="main">⇧ Shift</span><span class="latin">Shift</span>';b.onclick=()=>press("SHIFT");r.appendChild(b);
- b=document.createElement("button");b.className="key space";b.innerHTML='<span class="main">␠</span><span class="latin">Space</span>';b.onclick=()=>press("SPACE");r.appendChild(b);
- b=document.createElement("button");b.className="key back";b.innerHTML='<span class="main">⌫</span><span class="latin">Backspace</span>';b.onclick=()=>press("BACK");r.appendChild(b);
- b=document.createElement("button");b.className="key enter";b.innerHTML='<span class="main">↵</span><span class="latin">Enter</span>';b.onclick=()=>press("ENTER");r.appendChild(b);
+ const r=document.createElement("div");r.className="row";
+ const sh=document.createElement("button");sh.className="key wide";
+ sh.innerHTML='<span class="ml">Shift</span><span class="shiftlabel">SHIFT</span><span class="latin">hold physical Shift</span>';
+ r.appendChild(sh);
+ const sp=document.createElement("button");sp.className="key space";
+ sp.innerHTML='<span class="ml">␠</span><span class="shiftlabel">SPACE</span>';sp.onclick=()=>typeKey("SPACE");r.appendChild(sp);
+ const ba=document.createElement("button");ba.className="key wide";
+ ba.innerHTML='<span class="ml">⌫</span><span class="shiftlabel">BACKSPACE</span>';ba.onclick=()=>typeKey("BACK");r.appendChild(ba);
+ const en=document.createElement("button");en.className="key enter";
+ en.innerHTML='<span class="ml">↵</span><span class="shiftlabel">ENTER</span>';en.onclick=()=>typeKey("ENTER");r.appendChild(en);
  kb.appendChild(r);
 }
 
-const combos=[
-["ക്ക","K + D + K"],["മ്പ","C + D + H"],["ക്ഷ","K + D + Shift + <"],["ത്ര","L + D + J"],["ജ്ഞ","Shift + ] + ;"],
-["ഹ്ക","Shift + U + D + K"],["ദ്ര","V + D + O"],["ണ്റ","V + D + Shift + J + Z"],["സ്വ","Shift + C + D + ["],["ദ്ദ","V + D + L"],
-["ത്ര","L + D + J"],["ശ്ര","I + D + B + S"],["സ്ത","M + D + B"],["ശ്വ","Shift + U + D + Shift + U"],["പ്പ","P + D + P"],
-["ക്ക","K + D + N"],["വ്വ","B + D + / + E"],["ജ്ഞ","P + Shift + ]"],["ക്ത","K + D + L"],["ല്ല","N + D + N"]
+const special=[
+["ൻ","V + D + ]"],["ൽ","N + D + ]"],["ർ","J + D + ]"],["ൺ","Shift+C + D + ]"],["ൾ","Shift+N + D + ]"],
+["ങ്ങ","Shift+U + D + K"],["ന്ത","V + D + L"],["ഞ്ച","Shift+} + D + ;"],["ണ്ട","Shift+C + D + \""] ,["മ്പ","C + D + H"],
+["ക്ഷ","K + D + Shift+<"],["ക്ക","K + D + K"],["ച്ച","; + D + ;"],["ഞ്ഞ","Shift+} + D + Shift+}"],
+["ട്ട","' + D + '"],["ണ്ണ","Shift+C + D + Shift+C"],["ത്ത","L + D + L"],["ന്ന","V + D + V"],
+["മ്മ","C + D + C"],["ല്ല","N + D + N"],["വ്വ","B + D + B"],["യ്യ","/ + D + /"],
+["ശ്ശ","Shift+M + D + Shift+M"],["സ്സ","M + D + M"],["ള്ള","Shift+N + D + Shift+N"],["റ്റ","Shift+J + D + Shift+J"],
+["ക്ര","K + D + J"],["ക്യ","K + D + /"],["ക്വ","K + D + B"],["ന്റ","V + D + Shift+J"]
 ];
-// Reliable Unicode sequences for the common conjuncts:
-const comboUnicode={
-"ക്ക":"ക്ക","മ്പ":"മ്പ","ക്ഷ":"ക്ഷ","ത്ര":"ത്ര","ജ്ഞ":"ജ്ഞ","ഹ്ക":"ഹ്ക","ദ്ര":"ദ്ര","ണ്റ":"ണ്റ","സ്വ":"സ്വ","ദ്ദ":"ദ്ദ",
-"ശ്ര":"ശ്ര","സ്ത":"സ്ത","ശ്വ":"ശ്വ","പ്പ":"പ്പ","വ്വ":"വ്വ","ക്ത":"ക്ത","ല്ല":"ല്ല"
-};
-const cg=document.getElementById("combos");
-combos.forEach(([result,keys])=>{
- const b=document.createElement("button");b.className="combo";
- b.innerHTML=`<span class="result">${result}</span><span class="keys">${keys}</span>`;
- b.onclick=()=>insertText(comboUnicode[result]||result);cg.appendChild(b);
+const sg=document.getElementById("specials");
+special.forEach(([out,keys])=>{
+ const b=document.createElement("button");b.className="special";
+ b.innerHTML=`<strong>${out}</strong><span>${keys}</span>`;
+ b.onclick=()=>insertText(out);sg.appendChild(b);
 });
 
 document.addEventListener("keydown",e=>{
  if(e.ctrlKey||e.altKey||e.metaKey)return;
- if(e.key==="Shift"){shiftHeld=true;render();return}
  if(!mlMode)return;
- if(e.key==="Backspace"){e.preventDefault();press("BACK");return}
- if(e.key==="Enter"){e.preventDefault();press("ENTER");return}
- if(e.key===" "){e.preventDefault();press("SPACE");return}
- if(e.key.length===1 && (normal[e.key.toLowerCase()]!==undefined || shifted[e.key.toLowerCase()]!==undefined)){
-   e.preventDefault();insertText(output(e.key,e.shiftKey));
+ if(e.key==="Backspace"){e.preventDefault();backspace();return}
+ if(e.key==="Enter"){e.preventDefault();insertText("\n");return}
+ if(e.key===" "){e.preventDefault();insertText(" ");return}
+ const k=e.key.toLowerCase();
+ if(e.key.length===1 && K[k]){
+   e.preventDefault();insertText(label(k,e.shiftKey));
  }
 });
-document.addEventListener("keyup",e=>{if(e.key==="Shift"){shiftHeld=false;render()}});
-
-document.getElementById("mode").onclick=()=>{
- mlMode=!mlMode;
- document.getElementById("mode").textContent=mlMode?"🌐 Malayalam ON":"🌐 English ON";
-};
 document.getElementById("copy").onclick=async()=>{
- try{await navigator.clipboard.writeText(editor.value);document.getElementById("status").textContent="Copied ✓";setTimeout(update,1000)}catch{}
+ await navigator.clipboard.writeText(editor.value);
+ document.getElementById("status").textContent="Copied ✓";
+ setTimeout(update,900);
 };
 document.getElementById("clear").onclick=()=>{editor.value="";update();editor.focus()};
-document.getElementById("undo").onclick=()=>{document.execCommand("undo");update()};
-document.getElementById("redo").onclick=()=>{document.execCommand("redo");update()};
-function update(){document.getElementById("status").textContent=editor.value.length+" characters"}
+document.getElementById("undo").onclick=()=>document.execCommand("undo");
+document.getElementById("redo").onclick=()=>document.execCommand("redo");
+document.getElementById("mode").onclick=()=>{
+ mlMode=!mlMode;
+ document.getElementById("status").textContent=(mlMode?"Malayalam":"English")+" • "+editor.value.length+" characters";
+};
+function update(){document.getElementById("status").textContent=(mlMode?"Malayalam":"English")+" • "+editor.value.length+" characters"}
 editor.addEventListener("input",update);
 render();update();
 </script>
